@@ -4,7 +4,10 @@ from ROOT import TMVA
 from optparse import OptionParser
 TMVA_tools = TMVA.Tools.Instance()
 
-training_vars = ['l1_pt', 'pthiggs','svfitMass', 'visMass', 'mt']
+training_vars = ['l1_pt', 'pthiggs','svfitMass', 'visMass', 'mt', 'pZetaDisc', 'nJets', 'jet1_pt', 'l2_pt', 'l1_mass', 'diTau_pt', 'pfmet', 'deltaRL1L2', 'mtleg1', 'deltaPhiL1MET', 'deltaPhiL2MET', 'diTau_eta']
+vbf_vars = ['abs(VBF_deta)', 'abs(VBF_hdijetphi)', 'VBF_mjj']
+# each fold: name, (mod for training, mod for test)
+folds = [('fold0', (0, 1)), ('fold1', (1, 0))]
 
 if __name__ == '__main__':
     parser = OptionParser()
@@ -30,7 +33,7 @@ if __name__ == '__main__':
 
     # print sample_dict
     if options.vbf:
-        training_vars += ['abs(VBF_deta)', 'abs(VBF_hdijetphi)', 'VBF_mjj']
+        training_vars += vbf_vars
 
 
     sel_onejet = sample_dict['HiggsVBF125']['sel_onejet']
@@ -47,7 +50,7 @@ if __name__ == '__main__':
 
 
 
-    folds = [('fold0', (0, 1)), ('fold1', (1, 0))]
+    
 
     for fold in folds:
         fold_name = fold[0]
@@ -111,6 +114,7 @@ if __name__ == '__main__':
         # factory.BookMethod(TMVA.Types.kBDT, "BDTG", "!H:!V:NTrees=500::BoostType=Grad:Shrinkage=0.05:UseBaggedBoost:GradBaggingFraction=0.9:nCuts=500:MaxDepth=5:MinNodeSize=0.1" )
         factory.BookMethod("BDT", "BDTG"+postfix, "!H:!V:NTrees=500::BoostType=Grad:Shrinkage=0.03:GradBaggingFraction=1.0:nCuts=500:MaxDepth=5:MinNodeSize=0.1:UseBaggedBoost" )
         factory.BookMethod("BDT", "BDTG4"+postfix, "!H:!V:NTrees=500::BoostType=Grad:Shrinkage=0.03:GradBaggingFraction=0.5:nCuts=500:MaxDepth=5:MinNodeSize=0.1:UseBaggedBoost" )
+        factory.BookMethod("Fisher", "Fisher"+postfix, "!H:!V:Fisher:CreateMVAPdfs:PDFInterpolMVAPdf=Spline2:NbinsMVAPdf=50:NsmoothMVAPdf=10")
         # factory.BookMethod("BDT", "BDTG6", "!H:!V:NTrees=500::BoostType=Grad:Shrinkage=0.03:GradBaggingFraction=0.5:nCuts=500:MaxDepth=6:MinNodeSize=0.1:UseBaggedBoost" )
         # factory.BookMethod("BDT", "BDTG7", "!H:!V:NTrees=500::BoostType=Grad:Shrinkage=0.03:GradBaggingFraction=0.5:nCuts=500:MaxDepth=7:MinNodeSize=0.1:UseBaggedBoost" )
         #:MinNodeSize=0.1:UseBaggedBoost
